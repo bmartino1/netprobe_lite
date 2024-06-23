@@ -1,58 +1,110 @@
-FOR UNRIAD USE per edits in Forum and post:
+#Disclaimer!
+Many Thanks to plaintextpackets/netprobe_lite This Project is a Fork! This porject is used for non comercial use but specficaly targeted to run ON UNRIAD per edits in Forum and post:
 https://forums.unraid.net/topic/163308-docker-netprobe/#comment-1425154
 
-This is not my work, just edited to run for my needs. Many thanks to all the contrubitors and work that went into this!
+This is not my work!,  Just edited to run for my needs. Many thanks to all that have contrubitors and work that went into this! Please see orginal Project. https://github.com/plaintextpackets/netprobe_lite
 
 # Netprobe
-
-Simple and effective tool for measuring ISP performance at home. The tool measures several performance metrics including packet loss, latency, jitter, and DNS performance. It also has an optional speed test to measure bandwidth. Netprobe aggregates these metrics into a common score, which you can use to monitor overall health of your internet connection.
+What is it? This is a Simple and effective tool for measuring ISP performance at home. The tool measures several performance metrics including packet loss, latency, jitter, and DNS performance. It also has an optional speed test to measure bandwidth. Netprobe aggregates these metrics into a common score, which you can use to monitor overall health of your internet connection.
 
 ## Support the Project
-
 If you'd like to support the development of this project, feel free to buy me a coffee!
+https://buymeacoffee.com/plaintextpm and/or https://www.paypal.com/donate/?business=PA3ZHF52483KW&no_recurring=1&item_name=Tech+Support+%2F+Health+%2F+Buy+Me+a+Coffee&currency_code=USD
 
-https://buymeacoffee.com/plaintextpm
-
-## Full Tutorial
-
+## Full Tutorial about Netprobe
 Visit YouTube for a full tutorial on how to install and use Netprobe:
-
 https://youtu.be/Wn31husi6tc
 
-
-## Requirements and Setup
-
+## Requirements and Setup Notes FOR UNRIAD ONLY! - the docker compose file can be edited for use elsewhere.
 To run Netprobe, you'll need a PC running Docker connected directly to your ISP router. Specifically:
 
-1. Netprobe requires the latest version of Docker. For instructions on installing Docker, see YouTube, it's super easy.
+1. Netprobe requires the latest version of Docker. For instructions on installing Docker, see YouTube, it's super easy. (already installed on Unraid.)
+2. Netprobe should be installed on a machine (the 'probe') which has a wired Ethernet connection to your primary ISP router. This ensures the tests are accurately measuring your ISP performance and excluding and interference from your home network. An old PC with Linux installed is a great option for this!
 
-2. Netprobe should be installed on a machine (the 'probe') which has a wired Ethernet connection to your primary ISP router. This ensures the tests are accurately measuring your ISP performance and excluding and interference from your home network. An old PC with Linux installed is a great option for this.
+## Unraid Installation:
+Assumptions:
+I assume you already have the compose plugin installed. 
+https://unraid.net/community/apps?q=docker+compose#r
+Docker Compose Manager
+dcflachs
+Plugins, Tools / Utilities, System, Utilities
+*Install via the comunity app plugin.
 
-## Installation
+I assume you have a data spot in mind as we will need to download the data here. I chose to use unraids default docker appdata path: "/mnt/user/appdata"
 
 ### First-time Install
+see forum post: https://forums.unraid.net/topic/163308-docker-netprobe/?do=findComment&comment=1418929
 
-1. Clone the repo locally to the probe machine:
+1. Open Unraid terminal(via putty/Web UI / Console directly) cd to assumed data path to keep files. "cd /mnt/user/appdata" then GIT Clone the repo locally to the "probe"/Unriad machine:
 
 ```
 git clone https://github.com/plaintextpackets/netprobe_lite.git
 ```
+*Comming Soon - atm download via zip is working and then samba copy the files to unraid.
 
-2. From the cloned folder, use docker compose to launch the app:
+2. From the docker tab in the UnRaid Web UI. click add a new stack, give it the name Netprobe, and hit advance and set the git download path location... in my case it will be "/mnt/user/appdata/netprobe_lite"
+
+See Picture: https://content.invisioncic.com/u329766/monthly_2024_05/image.png.2d38cb023d10487efe2a0e6c6d17d835.png
+*Congrulations! Thats it! Unriad should see and use the docker-compose.yml file and .env file from within the web ui.
+
+This can be Verify by hitting edit stack by clicking the Gear
+See Picture: https://content.invisioncic.com/u329766/monthly_2024_05/image.png.c49eba219134e989fe9f8c66c49e0f3f.png
+
+Then click compose file / ENV File to edit.
+See Picture: https://content.invisioncic.com/u329766/monthly_2024_05/image.png.bcb5516c32088d01c6b0c2a2aca6123a.png
+
+### First-time Install - UnRaid Web UI Fixes!
+It is at this time we need to fix Unraid webUI links and "beautify" unriad Docker Tab by adding a UI Label and adding the web UI to Grafana
+*Unfortunalty The docker compose no longer reads teh docker-compose label /  docker run -l option used by unraid for its WEB UI. It is recomend to copy the links from this site by clicking the docker-compose.yml file. Options labled below aswell:
+
+To do this we Click UI Labels
+*All Picture png files are from the Unraid comunity app store docker version. 
+
+Service: netprobe-redis
+Icon: https://raw.githubusercontent.com/A75G/docker-templates/master/templates/icons/redis.png
+
+Service: netprobe-probe
+Icon: https://raw.githubusercontent.com/simonjenny/fastcom-mysql/master/fastlogo.jpg
+
+Service: netprobe-presentation
+Icon: https://github.com/chvb/docker-templates/raw/master/chvb/img/OnlyOfficeDocumentServer.jpg
+
+Service: netprobe-prometheus
+Icon: https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/prometheus.png
+
+Service: netprobe-speedtest
+Icon: https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/speedtest-tracker.png
+
+For Grafana! we need to add the WebUI Option as well!
+See picture https://content.invisioncic.com/u329766/monthly_2024_05/image.png.29bd820efecb6b5eb1779a4b6f5b3c85.png
+Service: netprobe-grafana
+Icon: https://github.com/atribe/unRAID-docker/raw/master/icons/grafana.png
+Web UI: http://[IP]:[PORT:3001]
+##################################
+
+Now its time for the Time for out first run start
 
 ```
-docker compose up
+click the "compose up" button in the web ui
+```
+*Please keep this window open until it finshis!
+This will setup the docker bridge network. then pull the necessary images. The runnign directory is the advvance path location you set earlier when making the stack.
+
+3. To finish the app, use docker compose again:
+ 
+```
+click the "compose down" button in the web ui
 ```
 
-3. To shut down the app, use docker compose again:
-
-```
-docker compose down
-```
+This Finishes the Unraid First Run Install!
 
 ### Upgrading Between Versions
+Unriad seems to be ficle. You may see a "Update Aviable" message At this time Please ignore that unless you know there is a docker update. Per the suport Forum for the docker plugin this is a known issue. and the update can only be done via the web ui update stack. I have found that you need to compose down first. click basic view swith to get to advance options and to delete the docker iamges to update and fix teh web UI update dispalyed message. Once all the iamges are deleted (THIS WILL NOT DELETE ANY COLECTED DATA!) click the "Update stack" button. If there is a docker image update this will update the docker. The compose file has be edited for Unriad use and how it handles the docker images. The file paths were changed to acomdate the sotrage of files in between updates. I have not experienced Data loss doing updates this way.
 
+Orginal Notes from plaintextpackets/netprobe_lite:
 When upgrading between versions, it is best to delete the deployment altogether and restart with the new code. The process is described below.
+*with the data folder and compse file edits this is no longer necessary. Kept for others use and info.
+
 
 1. Stop Netprobe in Docker and use the -v flag to delete all volumes (warning this deletes old data):
 
@@ -74,32 +126,14 @@ docker compose up
 
 ## How to use
 
-1. Navigate to: http://x.x.x.x:3001/d/app/netprobe where x.x.x.x = IP of the probe machine running Docker.
+1. If you updated the web UI you can click ont he grafana docker and click web ui it will open grafana. Then login and navigate to dashboard > netprobe
+   *Navigate to: http://x.x.x.x:3001/d/app/netprobe where x.x.x.x = IP of the probe machine running Docker.
 
-2. Default user / pass is 'admin/admin'. Login to Grafana and set a custom password.
+3. The Default user / pass is 'admin/admin'. Login to Grafana and set a custom password.
+   *The passowrd done't keep between docker updates. Please eidt the compose file and set a admin passowrd if you wish to change it.
 
-## How to customize
 
-### Enable Speedtest
-
-By default the speed test feature is disabled as many users pay for bandwidth usage (e.g. cellular connections). To enable it, edit the .env file to set the option to 'True':
-
-```
-SPEEDTEST_ENABLED="True"
-```
-
-Note: speedtest.net has a limit on how frequently you can connection and run the test. If you set the test to run too frequently, you will receive errors. Recommend leaving the 'SPEEEDTEST_INTERVAL' unchanged.
-
-### Change Netprobe port
-
-To change the port that Netprobe Lite is running on, edit the 'compose.yml' file, under the 'grafana' section:
-
-```    
-ports:
-    - '3001:3000'
-```
-
-Change the port on the left to the port you want to access Netprobe Lite on
+### ENV File Edits to use:
 
 ### Customize DNS test
 
@@ -113,24 +147,6 @@ DNS_NAMESERVER_4_IP="8.8.8.8" # Replace this IP with the DNS server you use at h
 
 Change 8.8.8.8 to the IP of the DNS server you use, then restart the application (docker compose down / docker compose up)
 
-### Use external Grafana
-
-Some users have their own Grafana instance running and would like to ingest Netprobe statistics there rather than running Grafana in Docker. To do this:
-
-1. In the compose.yaml file, add a port mapping to the Prometheus deployment config:
-
-```
-  prometheus:
-    ...
-    ports:
-      - 'XXXX:9090'    
-```
-... where XXXX is the port you wish to expose Prometheus on your host machine
-
-2. Remove all of the Grafana configuration from the compose.yaml file
-
-3. Run Netprobe and then add a datasource to your existing Grafana as http://x.x.x.x:XXXX where x.x.x.x = IP of the probe machine running Docker
-
 ### Data storage - default method
 
 By default, Docker will store the data collected in several Docker volumes, which will persist between restarts.
@@ -138,97 +154,17 @@ By default, Docker will store the data collected in several Docker volumes, whic
 They are:
 
 ```
-netprobe_grafana_data (used to store Grafana user / pw)
-netprobe_prometheus_data (used to store time series data)
+netprobe_lite>config>grafana>data (used to store Grafana)
+netprobe_lite>config>prometheus>data (used to store time series data)
 ```
-
-To clear out old data, you need to stop the app and remove these volumes:
-
-```
-docker compose down
-docker volume rm netprobe_grafana_data
-docker volume rm netprobe_prometheus_data
-```
-
-When started again the old data should be wiped out.
-
-### Data storage - bind mount method
-
-Using the default method, the data is stored within Docker volumes which you cannot easily access from the host itself. If you'd prefer storing data in mapped folders from the host, follow these instructions (thank you @Jeppedy):
-
-1. Clone the repo
-
-2. Inside the folder create two directories:
-
-```
-mkdir -p data/grafana data/prometheus 
-```
-
-3. Modify the compose.yml as follows (volume path as well as adding user ID):
-
-```
-  prometheus:
-    restart: always
-    container_name: netprobe-prometheus
-    image: "prom/prometheus"
-    volumes:
-      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./data/prometheus:/prometheus # modify this to map to the folder you created
-
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    networks:
-      - custom_network  # Attach to the custom network
-    user: "1000" # set this to the desired user with correct permissions to the bind mount
-
-  grafana:
-    restart: always
-    image: grafana/grafana-enterprise
-    container_name: netprobe-grafana
-    volumes:
-      - ./config/grafana/datasources/automatic.yml:/etc/grafana/provisioning/datasources/automatic.yml
-      - ./config/grafana/dashboards/main.yml:/etc/grafana/provisioning/dashboards/main.yml
-      - ./config/grafana/dashboards/netprobe.json:/var/lib/grafana/dashboards/netprobe.json
-      - ./data/grafana:/var/lib/grafana  # modify this to map to the folder you created
-    ports:
-      - '3001:3000'
-    networks:
-      - custom_network  # Attach to the custom network
-    user: "1000" # set this to the desired user with correct permissions to the bind mount
-```
-
-4. Remove the volumes section from compose.yml
-
 
 ### Run on startup
 
-Netprobe will automatically restart itself after the host system is rebooted, provided that Docker is also launched on startup. If you want to disable this behavior, modify the 'restart' variables in the compose.yaml file to this: 
-
-```
-restart: never
-```
-
-### Wipe all stored data
-
-To wipe all stored data and remove the Docker volumes, use this command:
-
-```
-docker compose down -v
-```
-This will delete all containers and volumes related to Netprobe.
-
+Disable by default. To enable on at restart Flip the Auto Start swtich by the stack name made earlier "netprobe".
+Netprobe will automatically restart itself after the host system is rebooted after that switch is pressed. the dockers also have a compse file eidt in event of a docekr error.
 
 
 ## FAQ & Troubleshooting
-
-Q. How do I reset my Grafana password?
-
-A. Delete the docker volume for grafana. This will reset your password but will leave your data:
-
-```
-docker volume rm netprobe_grafana_data
-```
 
 Q. I am running Pihole and when I enter my host IP under 'DNS_NAMESERVER_4_IP=' I receive this error:
 
@@ -253,5 +189,4 @@ Q. I constantly see one of my DNS servers at 5s latency, is this normal?
 A. 5s is the timeout for DNS queries in Netprobe Lite. If you see this happening for one specific IP, likely your machine is having issues using that DNS server (and so you shouldn't use it for home use).
 
 ## License
-
-This project is released under a custom license that restricts commercial use. You are free to use, modify, and distribute the software for non-commercial purposes. Commercial use of this software is strictly prohibited without prior permission. If you have any questions or wish to use this software commercially, please contact [plaintextpackets@gmail.com].
+This project is released under the GNU Public License it orgins comes from the forked custom license that restricts commercial use! You are free to use, modify, and distribute the software for non-commercial purposes. Commercial use of this software is strictly prohibited without prior permission. If you have any questions or wish to use this software commercially, please contact [plaintextpackets@gmail.com].
