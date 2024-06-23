@@ -41,9 +41,8 @@ see forum post: https://forums.unraid.net/topic/163308-docker-netprobe/?do=findC
 1. Open Unraid terminal(via putty/Web UI / Console directly) cd to assumed data path to keep files. "cd /mnt/user/appdata" then GIT Clone the repo locally to the "probe"/Unriad machine:
 
 ```
-git clone https://github.com/plaintextpackets/netprobe_lite.git
+git clone https://github.com/bmartino1/netprobe_lite.git
 ```
-*Comming Soon - atm download via zip is working and then samba copy the files to unraid.
 
 2. From the docker tab in the UnRaid Web UI. click add a new stack, give it the name Netprobe, and hit advance and set the git download path location... in my case it will be "/mnt/user/appdata/netprobe_lite"
 
