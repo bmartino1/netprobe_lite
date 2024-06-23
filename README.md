@@ -1,3 +1,8 @@
+FOR UNRIAD USE per edits in Forum and post:
+https://forums.unraid.net/topic/163308-docker-netprobe/#comment-1425154
+
+This is not my work, just edited to run for my needs. Many thanks to all the contrubitors and work that went into this!
+
 # Netprobe
 
 Simple and effective tool for measuring ISP performance at home. The tool measures several performance metrics including packet loss, latency, jitter, and DNS performance. It also has an optional speed test to measure bandwidth. Netprobe aggregates these metrics into a common score, which you can use to monitor overall health of your internet connection.
