@@ -3,7 +3,7 @@
 version: '3.8'
 
 networks:
-  custom-netprobe-net:
+  netprobe-net:
     driver: bridge
     ipam:
       config:
@@ -22,7 +22,7 @@ services:
     volumes:
       - ./config/redis/redis.conf:/etc/redis/redis.conf
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
@@ -42,7 +42,7 @@ services:
       net.unraid.docker.managed: 'composeman'
       net.unraid.docker.shell: '/bin/sh'
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
@@ -62,7 +62,7 @@ services:
     environment:
       - MODULE=SPEEDTEST
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
@@ -82,7 +82,7 @@ services:
       net.unraid.docker.managed: 'composeman'
       net.unraid.docker.shell: '/bin/sh'
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
@@ -104,7 +104,7 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
@@ -129,7 +129,7 @@ services:
     ports:
       - 3001:3000
     networks:
-      - custom-netprobe-net
+      - netprobe-net
     logging:
       options:
         max-size: "50m"
