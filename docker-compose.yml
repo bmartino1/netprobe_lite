@@ -1,119 +1,139 @@
-version: "3"
+# Docker compose file for netprobe
+# https://github.com/plaintextpackets/netprobe_lite
+version: '3.8'
+
 networks:
-    custom_network:
-        driver: bridge
-        ipam:
-            config:
-                - subnet: 172.21.0.0/16
+  custom-netprobe-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
 services:
-    redis:
-        pull_policy: always
-        restart: always
-        container_name: netprobe-redis
-        image: redis:latest
-        labels:
-            - net.unraid.docker.icon='https://raw.githubusercontent.com/A75G/docker-templates/master/templates/icons/redis.png'
-        volumes:
-            - ./config/redis/redis.conf:/etc/redis/redis.conf
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-                
-    netprobe:
-        pull_policy: always
-        restart: always
-        container_name: netprobe-probe
-        build: .
-        volumes:
-            - .:/netprobe_lite
-        environment:
-            MODULE: NETPROBE
-        labels:
-            - net.unraid.docker.icon='https://raw.githubusercontent.com/simonjenny/fastcom-mysql/master/fastlogo.jpg'
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-                
-    presentation:
-        pull_policy: always
-        restart: always
-        container_name: netprobe-presentation
-        build: .
-        volumes:
-            - .:/netprobe_lite
-        environment:
-            MODULE: PRESENTATION
-        labels:
-            - net.unraid.docker.icon='https://github.com/chvb/docker-templates/raw/master/chvb/img/OnlyOfficeDocumentServer.jpg'
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-                
-    prometheus:
-        pull_policy: always
-        restart: always
-        container_name: netprobe-prometheus
-        image: prom/prometheus
-        labels:
-            - net.unraid.docker.icon='https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/prometheus.png'
-        volumes:
-            - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-            - ./config/prometheus/data/:/prometheus/
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-                
-    grafana:
-        pull_policy: always
-        restart: always
-        image: grafana/grafana-enterprise:latest
-        labels:
-            - net.unraid.docker.webui=http://[IP]:[PORT:3001]
-            - net.unraid.docker.icon='https://github.com/atribe/unRAID-docker/raw/master/icons/grafana.png'
-        container_name: netprobe-grafana
-        volumes:
-            - ./config/grafana/datasources/automatic.yml:/etc/grafana/provisioning/datasources/automatic.yml
-            - ./config/grafana/dashboards/main.yml:/etc/grafana/provisioning/dashboards/main.yml
-            - ./config/grafana/data/:/var/lib/grafana/
-        ports:
-            - 3001:3000
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-        environment:
-            - GF_SECURITY_ADMIN_USER=admin
-            - GF_SECURITY_ADMIN_PASSWORD=admin
-            
-    speedtest:
-        restart: always
-        container_name: netprobe-speedtest
-        image: "plaintextpackets/netprobe:latest"
-        pull_policy: always
-        labels:
-            - net.unraid.docker.icon='https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/speedtest-tracker.png'   
-        volumes:
-            - .:/netprobe_lite
-        environment:
-            MODULE: "SPEEDTEST"
-        networks:
-            - custom_network
-        logging:
-            options:
-                max-size: 50m
-                max-file: 1
-   
+  redis:
+    restart: always
+    container_name: netprobe-redis
+    image: redis:latest
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/A75G/docker-templates/master/templates/icons/redis.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    volumes:
+      - ./config/redis/redis.conf:/etc/redis/redis.conf
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+
+  netprobe:
+    restart: always
+    container_name: netprobe-probe
+    image: plaintextpackets/netprobe:latest
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      - MODULE=NETPROBE
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/simonjenny/fastcom-mysql/master/fastlogo.jpg'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+
+  speedtest:
+    restart: always
+    container_name: netprobe-speedtest
+    image: plaintextpackets/netprobe:latest
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/speedtest-tracker.png'   
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      - MODULE=SPEEDTEST
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+
+  presentation:
+    restart: always
+    container_name: netprobe-presentation
+    image: plaintextpackets/netprobe:latest
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      - MODULE=PRESENTATION
+    labels:
+      net.unraid.docker.icon: 'https://github.com/chvb/docker-templates/raw/master/chvb/img/OnlyOfficeDocumentServer.jpg'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+
+  prometheus:
+    restart: always
+    container_name: netprobe-prometheus
+    image: prom/prometheus
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/prometheus.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/data/:/prometheus  # Persistent local storage for Prometheus data
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+
+  grafana:
+    restart: always
+    image: grafana/grafana-enterprise:latest
+    labels:
+      net.unraid.docker.webui: http://[IP]:[PORT:3001]
+      net.unraid.docker.icon: 'https://github.com/atribe/unRAID-docker/raw/master/icons/grafana.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+    container_name: netprobe-grafana
+    volumes:
+      - ./config/grafana/datasources/automatic.yml:/etc/grafana/provisioning/datasources/automatic.yml
+      - ./config/grafana/dashboards/main.yml:/etc/grafana/provisioning/dashboards/main.yml
+      - ./config/grafana/dashboards/netprobe.json:/var/lib/grafana/dashboards/netprobe.json
+      - ./config/grafana/data/:/var/lib/grafana 
+      # Persistent local storage for Grafana data
+    ports:
+      - 3001:3000
+    networks:
+      - custom-netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
