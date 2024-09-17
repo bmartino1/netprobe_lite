@@ -101,6 +101,11 @@ click the "compose down" button in the web ui
 This Finishes the Unraid First Run Install!
 
 ### Upgrading Between Versions
+
+*copmose has been updated to facialtate this. uses a docker image. see compose file...
+Unirad may show update avaible. Please click update stack if the docekr update notfication didn't go away... otherwise in unraid you will have to stop the netprobe dockers click compose down.
+Then click advance togle and remove all the netprove dokcer images (this will not delete andy collected data!) then click docker up this will pull hte lattest docker images.
+
 Unriad seems to be fickle. You may see a "Update Available" message At this time Please ignore that unless you know there is a docker update. Per the support Forum for the docker plugin this is a known issue. and the update can only be done via the web ui update stack. I have found that you need to compose down first. click basic view switch to get to advance options and to delete the docker images to update and fix the web UI update displayed message. Once all the images are deleted (THIS WILL NOT DELETE ANY COLECTED DATA!) click the "Update stack" button. If there is a docker image update this will update the docker. The compose file has be edited for Unriad use and how it handles the docker images. The file paths were changed to accommodate the storage of files in between updates. I have not experienced Data loss doing updates this way.
 
 Original Notes from plaintextpackets/netprobe_lite edited for Unraid:
