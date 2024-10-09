@@ -1,6 +1,6 @@
-# Docker compose file for netprobe
+# Docker compose file for netprobe on Unraid
 # https://github.com/plaintextpackets/netprobe_lite
-version: '3.8'
+#version: '3.8'
 
 networks:
   netprobe-net:
@@ -22,7 +22,8 @@ services:
     volumes:
       - ./config/redis/redis.conf:/etc/redis/redis.conf
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.2
     logging:
       options:
         max-size: "50m"
@@ -42,7 +43,8 @@ services:
       net.unraid.docker.managed: 'composeman'
       net.unraid.docker.shell: '/bin/sh'
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.3
     logging:
       options:
         max-size: "50m"
@@ -62,7 +64,8 @@ services:
     environment:
       - MODULE=SPEEDTEST
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.4
     logging:
       options:
         max-size: "50m"
@@ -82,7 +85,8 @@ services:
       net.unraid.docker.managed: 'composeman'
       net.unraid.docker.shell: '/bin/sh'
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.5
     logging:
       options:
         max-size: "50m"
@@ -91,7 +95,7 @@ services:
   prometheus:
     restart: always
     container_name: netprobe-prometheus
-    image: prom/prometheus
+    image: prom/prometheus:latest
     labels:
       net.unraid.docker.icon: 'https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/prometheus.png'
       folder.view: netprobe_lite
@@ -104,7 +108,8 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.6
     logging:
       options:
         max-size: "50m"
@@ -112,9 +117,9 @@ services:
 
   grafana:
     restart: always
-    image: grafana/grafana-enterprise:latest
+    image: grafana/grafana:main
     labels:
-      net.unraid.docker.webui: http://[IP]:[PORT:3001]
+      net.unraid.docker.webui: http://[IP]:[PORT:3000]
       net.unraid.docker.icon: 'https://github.com/atribe/unRAID-docker/raw/master/icons/grafana.png'
       folder.view: netprobe_lite
       net.unraid.docker.managed: 'composeman'
@@ -127,9 +132,10 @@ services:
       - ./config/grafana/data/:/var/lib/grafana 
       # Persistent local storage for Grafana data
     ports:
-      - 3001:3000
+      - 3000:3000
     networks:
-      - netprobe-net
+      netprobe-net:
+        ipv4_address: 172.21.0.7
     logging:
       options:
         max-size: "50m"
@@ -137,3 +143,5 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - USER_ID=99
+      - GROUP_ID=100
