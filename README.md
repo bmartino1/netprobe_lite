@@ -46,7 +46,7 @@ Refer to the forum post: [Forum Installation Guide](https://forums.unraid.net/to
 ### First-time Install - Unraid Web UI Fixes!
 At this time, we need to fix Unraid web UI links and "beautify" the Unraid Docker Tab by adding a UI Label and linking the web UI to Grafana. Unfortunately, the docker compose no longer reads the docker-compose label/docker run -l option used by Unraid for its WEB UI. It is recommended to copy the links from this site by clicking the docker-compose.yml file. Options labeled below as well:
 
-- Icons should auto fill form first run of compose. Otherwise you will need to update the stack!
+- Icons should autofill from first run of compose. Edit Stack > Compose File.... Otherwise you will need to update the UI Labels!
 
 - **Service: netprobe-redis**
   - Icon: <img src="https://raw.githubusercontent.com/A75G/docker-templates/master/templates/icons/redis.png" width="64" height="64">
