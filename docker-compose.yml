@@ -1,0 +1,181 @@
+# Docker compose file for netprobe on Unraid
+# https://github.com/plaintextpackets/netprobe_lite
+#version: '3.8'
+
+name: netprobe
+
+#You can make a Docker Bridge network called netprobe-net and use this or have compose make and destory the network when they are up or down...
+#networks:
+#  netprobe-net:
+#    external: true  # Use existing network
+
+networks:
+  netprobe-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16  # Different subnet from Unraid's default Docker bridge
+          gateway: 172.18.0.1
+
+services:
+  redis:
+    restart: always
+    container_name: netprobe-redis
+    image: redis:latest
+    volumes:
+      - ./config/redis/redis.conf:/etc/redis/redis.conf
+    networks:
+      - netprobe-net
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/A75G/docker-templates/master/templates/icons/redis.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+  netprobe:
+    restart: always
+    container_name: netprobe-probe
+    image: plaintextpackets/netprobe:latest
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      MODULE: "NETPROBE"
+    networks:
+      - netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/simonjenny/fastcom-mysql/master/fastlogo.jpg'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+  speedtest:
+    restart: always
+    container_name: netprobe-speedtest
+    image: plaintextpackets/netprobe:latest
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      MODULE: "SPEEDTEST"
+    networks:
+      - netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/speedtest-tracker.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+  presentation:
+    restart: always
+    container_name: netprobe-presentation
+    image: plaintextpackets/netprobe:latest
+    volumes:
+      - .:/netprobe_lite
+    environment:
+      MODULE: "PRESENTATION"
+    networks:
+      - netprobe-net
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    labels:
+      net.unraid.docker.icon: 'https://github.com/chvb/docker-templates/raw/master/chvb/img/OnlyOfficeDocumentServer.jpg'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+  prometheus:
+    restart: always
+    container_name: netprobe-prometheus
+    image: prom/prometheus
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus  # Persistent local storage for Prometheus data
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'  # Adjust retention to 30 days
+    networks:
+      - netprobe-net
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    labels:
+      net.unraid.docker.icon: 'https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/prometheus.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+  grafana:
+    restart: always
+    image: grafana/grafana-enterprise:latest
+    container_name: netprobe-grafana
+    volumes:
+      - ./config/grafana/datasources/automatic.yml:/etc/grafana/provisioning/datasources/automatic.yml
+      - ./config/grafana/dashboards/main.yml:/etc/grafana/provisioning/dashboards/main.yml
+      - ./config/grafana/dashboards/netprobe.json:/var/lib/grafana/dashboards/netprobe.json
+      - grafana_data:/var/lib/grafana  # Persistent local storage for Grafana data
+    ports:
+      - '3001:3000'
+    networks:
+      - netprobe-net
+    dns:
+      - 192.168.1.1
+      - 8.8.8.8
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "1"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      # Change Me for admin passowrd login for web ui...
+    labels:
+      net.unraid.docker.webui: http://[IP]:[PORT:3001]
+      net.unraid.docker.icon: 'https://github.com/atribe/unRAID-docker/raw/master/icons/grafana.png'
+      folder.view: netprobe_lite
+      net.unraid.docker.managed: 'composeman'
+      net.unraid.docker.shell: '/bin/sh'
+
+#Mounting Volumes form git clone and usingthe data folder for storage on unraid...
+volumes:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./data/promethus
+      o: bind
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./data/grafana
+      o: bind
