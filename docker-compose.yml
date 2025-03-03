@@ -5,6 +5,7 @@
 name: netprobe
 
 #You can make a Docker Bridge network called netprobe-net and use this or have compose make and destory the network when they are up or down...
+#docker network create --driver bridge --subnet=172.18.0.0/16 --gateway=172.18.0.1 netprobe-net
 #networks:
 #  netprobe-net:
 #    external: true  # Use existing network
