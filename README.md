@@ -1,5 +1,5 @@
 # Disclaimer!
-Many thanks to plaintextpackets/netprobe_lite, as this project is a fork. It is intended for non-commercial use and is specifically tailored to run on Unraid as detailed in the forum post:
+Many thanks to plaintextpackets/netprobe_lite, as this project is a fork. It is intended for specific tailored use to run on Unraid as detailed in the forum post:
 [Forum Link](https://forums.unraid.net/topic/163308-docker-netprobe/#comment-1425154)
 
 This is not my original work; it has been modified to suit my needs and those of the Unraid community. A huge thank you to all contributors to the original project! Please see the original project here:
@@ -7,11 +7,6 @@ This is not my original work; it has been modified to suit my needs and those of
 
 # Netprobe
 What is it? Netprobe is a simple and effective tool for measuring ISP performance at home. The tool measures several performance metrics including packet loss, latency, jitter, and DNS performance. It also has an optional speed test to measure bandwidth. Netprobe aggregates these metrics into a common score, which you can use to monitor the overall health of your internet connection.
-
-## Support the Project
-If you'd like to support the development of this project, feel free to buy me a coffee!
-- Plaintextpackets: [Buy me a coffee](https://buymeacoffee.com/plaintextpm)
-- Bmartino1: [PayPal Donation](https://www.paypal.com/donate/?business=PA3ZHF52483KW&no_recurring=1&item_name=Tech+Support+%2F+Health+%2F+Buy+Me+a+Coffee&currency_code=USD)
 
 ## Full Tutorial about Netprobe
 Visit YouTube for a full tutorial on how to install and use Netprobe:
